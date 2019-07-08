@@ -123,5 +123,5 @@ if __name__ == "__main__":
     # BuildProducts if do_build=True and do_program=False
     # None otherwise.
     plan = plat.build(Top(), do_build=False, do_program=False)  # BuildPlan
-    products = plan.execute(run_script=True)  # BuildProducts if run_script=True
+    products = plan.execute()  # BuildProducts
     plat.toolchain_program(products, "top")  # Manally run the programmer.
