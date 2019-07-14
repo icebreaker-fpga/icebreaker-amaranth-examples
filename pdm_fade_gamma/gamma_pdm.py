@@ -36,7 +36,7 @@ class Top(Elaboratable):
 
         self.pdm_g = pdm_g = PDMDriver()
         self.pdm_r = pdm_r = PDMDriver()
-        self.cnt = cnt = PDMCounter()
+        self.cnt = cnt = PDMCounter(gamma=gamma)
 
     def elaborate(self, platform):
         clk12 = platform.request("clk12")
@@ -176,6 +176,7 @@ class PDMCounter(Elaboratable):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-s", action="store_true", help="Simulate PDMDriver (for debugging).")
+    parser.add_argument("-g", type=float, default=2.2, help="Gamma exponent (default 2.2)")
     args = parser.parse_args()
 
     if args.s:
@@ -199,4 +200,4 @@ if __name__ == "__main__":
             sim.run()
     else:
         plat = ICEBreakerPlatform()
-        plat.build(Top(), do_program=True)
+        plat.build(Top(gamma=args.g), do_program=True)
