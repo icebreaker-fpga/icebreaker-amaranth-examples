@@ -40,8 +40,8 @@ class Top(Elaboratable):
 
     def elaborate(self, platform):
         clk12 = platform.request("clk12")
-        ledr_n = platform.request("user_ledr")
-        ledg_n = platform.request("user_ledg")
+        ledr_n = platform.request("led_r")
+        ledg_n = platform.request("led_g")
 
         pdm_out1 = Signal()
         pdm_out2 = Signal()
