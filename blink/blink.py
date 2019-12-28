@@ -7,7 +7,7 @@ class Blinker(Elaboratable):
     
     def elaborate(self, platform):
         clk12 = platform.request("clk12")
-        led = platform.request("user_ledr")
+        led = platform.request("led_r")
         
         m = Module()
         m.domains.sync = ClockDomain()
