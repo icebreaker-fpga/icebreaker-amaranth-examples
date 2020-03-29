@@ -13,8 +13,8 @@ class Blinker(Elaboratable):
         m.domains.sync = ClockDomain()
         m.d.comb += ClockSignal().eq(clk12)
         
-        counter = Signal(max=self.maxperiod+1)
-        period = Signal(max=self.maxperiod+1)
+        counter = Signal(range(self.maxperiod+1))
+        period = Signal(range(self.maxperiod+1))
         
         m.d.comb += period.eq(self.maxperiod)
         
