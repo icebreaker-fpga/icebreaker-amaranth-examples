@@ -118,7 +118,7 @@ class PDMCounter(Elaboratable):
         # __init__() or elaborate, esp if submodule depends on other parameters
         # sent to __init__(). Contrast to Blinker, where Signals get maxperiod
         # in elaborate from self.maxperiod; there is no "self.gamma" here.
-        gamma_init = [int(pow(1/255.0 * i, gamma) * 0xFFFF)
+        gamma_init = [int(pow(1 / 255.0 * i, gamma) * 0xFFFF)
                       for i in range(256)]
         self.gamma_table = Memory(width=out_width, depth=2**in_width, init=gamma_init)
         self.in_width = in_width
@@ -126,7 +126,7 @@ class PDMCounter(Elaboratable):
         self.pdm_level1 = Signal(out_width)
         self.pdm_level2 = Signal.like(self.pdm_level1)
 
-    def elaborate(self, platform):
+    def elaborate(self, platform) -> Module:
         m = Module()
 
         m.submodules.gamma_rd_p = gamma_rd_p = self.gamma_table.read_port()
