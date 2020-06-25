@@ -181,22 +181,19 @@ if __name__ == "__main__":
 
     if args.s:
         p = PDMDriver(8)
-        with pysim.Simulator(p,
-                vcd_file=open("drv.vcd", "w"),
-                gtkw_file=open("drv.gtkw", "w"),
-                traces=[p.pdm_in, p.pdm_out]) as sim:
-            sim.add_clock(1.0/12e6)
+        sim = pysim.Simulator(p)
+        sim.add_clock(1.0 / 12e6)
 
-            def out_proc():
-                for i in range(256):
-                    yield p.pdm_in.eq(i)
-                    yield
-                    yield
-                    yield
-                    yield
+        def out_proc():
+            for i in range(256):
+                yield p.pdm_in.eq(i)
+                yield
+                yield
+                yield
+                yield
 
-            sim.add_sync_process(out_proc())
-
+        sim.add_sync_process(out_proc)
+        with sim.write_vcd("drv.vcd", "drv.gtkw", traces=[p.pdm_in, p.pdm_out]):
             sim.run()
     else:
         plat = ICEBreakerPlatform()

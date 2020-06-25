@@ -13,8 +13,7 @@ seven_seg_pmod = [
              Subsignal("ae", PinsN("7", dir="o", conn=("pmod", 0)), Attrs(IO_STANDARD="SB_LVCMOS33")),
              Subsignal("af", PinsN("8", dir="o", conn=("pmod", 0)), Attrs(IO_STANDARD="SB_LVCMOS33")),
              Subsignal("ag", PinsN("9", dir="o", conn=("pmod", 0)), Attrs(IO_STANDARD="SB_LVCMOS33")),
-             Subsignal("ca", PinsN("10", dir="o", conn=("pmod", 0)), Attrs(IO_STANDARD="SB_LVCMOS33"))
-    ),
+             Subsignal("ca", PinsN("10", dir="o", conn=("pmod", 0)), Attrs(IO_STANDARD="SB_LVCMOS33")))
 ]
 
 
@@ -26,8 +25,7 @@ class Top(Elaboratable):
         # constructor.
         self.ones_to_segs = DigitToSegments()
         self.tens_to_segs = DigitToSegments()
-        
-        
+
     def elaborate(self, platform):
         seg_pins = platform.request("seven_seg")
         clk12 = platform.request("clk12")
@@ -35,32 +33,32 @@ class Top(Elaboratable):
         m = Module()
         m.domains.sync = ClockDomain()
         m.d.comb += ClockSignal().eq(clk12)
-        
+
         seg_pins_cat = Signal(7)
-        
+
         counter = Signal(30)
         ones_counter = Signal(4)
         tens_counter = Signal(4)
         display_state = Signal(3)
-        
-        ones_segment = Signal(7)
-        tens_segment = Signal(7)
-        
+
+        # ones_segment = Signal(7)
+        # tens_segment = Signal(7)
+
         m.submodules.ones_to_segs = self.ones_to_segs
         m.submodules.tens_to_segs = self.tens_to_segs
-        
+
         m.d.comb += [
             Cat([seg_pins.aa, seg_pins.ab, seg_pins.ac, seg_pins.ad,
-                    seg_pins.ae, seg_pins.af, seg_pins.ag]).eq(seg_pins_cat),
+                 seg_pins.ae, seg_pins.af, seg_pins.ag]).eq(seg_pins_cat),
             ones_counter.eq(counter[21:25]),
             tens_counter.eq(counter[25:29]),
             display_state.eq(counter[2:5]),
             self.ones_to_segs.digit.eq(ones_counter),
             self.tens_to_segs.digit.eq(tens_counter)
         ]
-            
+
         m.d.sync += counter.eq(counter + 1)
-        
+
         with m.Switch(display_state):
             with m.Case("00-"):
                 m.d.sync += seg_pins_cat.eq(self.ones_to_segs.segments)
@@ -76,16 +74,16 @@ class Top(Elaboratable):
                 m.d.sync += seg_pins.ca.eq(0)
 
         return m
-        
+
 
 class DigitToSegments(Elaboratable):
     def __init__(self):
         self.digit = Signal(4)
         self.segments = Signal(7)
-        
+
     def elaborate(self, platform):
         m = Module()
-        
+
         with m.Switch(self.digit):
             for n, seg_val in enumerate([
                     0b0111111,
@@ -103,11 +101,10 @@ class DigitToSegments(Elaboratable):
                     0b0111001,
                     0b1011110,
                     0b1111001,
-                    0b1110001
-                ]):
+                    0b1110001]):
                 with m.Case(n):
                     m.d.sync += self.segments.eq(seg_val)
-        
+
         return m
 
 
@@ -118,7 +115,7 @@ if __name__ == "__main__":
     # and create a zip file if you have a BuildPlan instance).
     plat = ICEBreakerPlatform()
     plat.add_resources(seven_seg_pmod)
-    
+
     # BuildPlan if do_build=False
     # BuildProducts if do_build=True and do_program=False
     # None otherwise.
