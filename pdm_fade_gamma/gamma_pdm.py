@@ -21,12 +21,12 @@ from nmigen.back import pysim
 # on the iCEBreaker. The intended effect is that the two LED "breathe" in
 # brigtness up and down in opposite directions.
 
+
 # TODO: Send PR to nmigen_boards and add to `nmigen_boards.ext.pmod`.
 def PmodGPIOType1AResource(name, number, *, pmod, extras=None):
     return Resource(name, number,
-        Pins("1 2 3 4 7 8 9 10", dir="io", conn=("pmod", pmod)),
-        extras=extras
-    )
+                    Pins("1 2 3 4 7 8 9 10", dir="io", conn=("pmod", pmod)),
+                    extras=extras)
 
 
 class Top(Elaboratable):
@@ -34,21 +34,15 @@ class Top(Elaboratable):
         self.width = width
         self.gamma = gamma
 
-        self.pdm_g = pdm_g = PDMDriver()
-        self.pdm_r = pdm_r = PDMDriver()
-        self.cnt = cnt = PDMCounter(gamma=gamma)
+        self.pdm_g = PDMDriver()
+        self.pdm_r = PDMDriver()
+        self.cnt = PDMCounter(gamma=gamma)
 
     def elaborate(self, platform):
-        clk12 = platform.request("clk12")
         ledr_n = platform.request("led_r")
         ledg_n = platform.request("led_g")
 
-        pdm_out1 = Signal()
-        pdm_out2 = Signal()
-
         m = Module()
-        m.domains.sync = ClockDomain()
-        m.d.comb += ClockSignal().eq(clk12)
 
         m.submodules.pdm_g = self.pdm_g
         m.submodules.pdm_r = self.pdm_r

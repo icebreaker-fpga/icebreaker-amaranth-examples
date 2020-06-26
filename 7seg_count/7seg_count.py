@@ -28,11 +28,8 @@ class Top(Elaboratable):
 
     def elaborate(self, platform):
         seg_pins = platform.request("seven_seg")
-        clk12 = platform.request("clk12")
 
         m = Module()
-        m.domains.sync = ClockDomain()
-        m.d.comb += ClockSignal().eq(clk12)
 
         seg_pins_cat = Signal(7)
 
