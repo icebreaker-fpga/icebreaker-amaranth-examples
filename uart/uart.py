@@ -1,7 +1,8 @@
+from ctypes import ArgumentError
 from nmigen import *
 from nmigen.build import *
-from nmigen_boards.icebreaker import *
 from nmigen.back import pysim
+from nmigen_boards.icebreaker import *
 
 
 def _divisor(freq_in, freq_out, max_ppm=None):
@@ -23,18 +24,23 @@ class UART(Elaboratable):
         self.rx_ack = Signal()
         self.rx_error = Signal()
         self.rx_strobe = Signal()
+        self.rx_bitno = None
+        self.rx_fsm = None
 
         self.tx_data = Signal(8)
         self.tx_ready = Signal()
         self.tx_ack = Signal()
         self.tx_strobe = Signal()
+        self.tx_bitno = None
+        self.tx_latch = None
+        self.tx_fsm = None
 
         self.serial = serial
 
         self.divisor = _divisor(
             freq_in=clk_freq, freq_out=baud_rate, max_ppm=50000)
 
-    def elaborate(self, platform: Platform) -> Module:
+    def elaborate(self, _platform: Platform) -> Module:
         m = Module()
 
         # RX
@@ -135,7 +141,7 @@ class _TestPads(Elaboratable):
         self.rx = Signal(reset=1)
         self.tx = Signal()
 
-    def elaborate(self, platform: Platform) -> Module:
+    def elaborate(self, _platform: Platform) -> Module:
         m = Module()
         return m
 
@@ -264,7 +270,7 @@ def _test_tx(tx, dut):
     yield from O(0x00, [0, 0, 0, 0, 0, 0, 0, 0])
 
 
-def _test(tx, rx, dut, cd=None):
+def _test(tx, rx, dut, _cd=None):
     yield from _test_rx(rx, dut)
     yield from _test_tx(tx, dut)
 
@@ -275,6 +281,7 @@ class _LoopbackTest(Elaboratable):
         self.data = Signal(8)
         self.rx_strobe = Signal()
         self.tx_strobe = Signal()
+        self.uart = None
 
     def elaborate(self, platform: Platform) -> Module:
         m = Module()

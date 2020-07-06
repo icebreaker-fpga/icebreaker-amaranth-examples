@@ -1,5 +1,5 @@
 from nmigen import *
-from nmigen_boards.icebreaker import *
+from nmigen_boards.icebreaker import ICEBreakerPlatform
 
 
 class Blinker(Elaboratable):

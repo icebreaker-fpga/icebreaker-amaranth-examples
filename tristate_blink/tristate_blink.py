@@ -1,14 +1,15 @@
 from nmigen import *
 from nmigen.build import *
 from nmigen.lib.io import Pin
-from nmigen_boards.icebreaker import *
+from nmigen_boards.icebreaker import ICEBreakerPlatform
 
 # This resource has a single 'oe' signal for all the pins.
 # If we want individually controllable 'oe' signals for each pin,
 # then we would need to define a Subsignal for each pin.
+# The triled Pmod is connected to PMOD1A connector.
 triled_pmod = [
-    Resource("triled", 0, Pins("1 2 3 4 7 8 9 10", dir="oe",
-                               conn=("pmod", 1)), Attrs(IO_STANDARD="SB_LVCMOS")),
+    Resource("triled", 0, Pins("1 2 3 4 7 8 9 10", dir="oe", conn=("pmod", 0)),
+             Attrs(IO_STANDARD="SB_LVCMOS")),
 ]
 
 
@@ -20,7 +21,7 @@ class Blinker(Elaboratable):
         self.state_counter = Signal(2)
         self.leds = leds
 
-    def elaborate(self, platform: Platform) -> Module:
+    def elaborate(self, _platform: Platform) -> Module:
         m = Module()
 
         # Timer

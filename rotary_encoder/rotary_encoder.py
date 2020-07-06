@@ -4,9 +4,9 @@ from argparse import ArgumentParser
 
 from nmigen import *
 from nmigen.build import *
-from nmigen_boards.icebreaker import *
-
 from nmigen.back import pysim
+from nmigen_boards.icebreaker import ICEBreakerPlatform
+
 
 # | rotary encoder pins | PMOD 1A pins |
 # |---------------------|--------------|
@@ -15,9 +15,12 @@ from nmigen.back import pysim
 # | B                   | 2            |
 rotary_encoder_pmod = [
     Resource("rotary_encoder", 0,
-             Subsignal("quadrature", PinsN("1", dir="i", conn=("pmod", 0)), Attrs(IO_STANDARD="SB_LVCMOS33", PULLUP=1)),
-             Subsignal("in_phase", PinsN("2", dir="i", conn=("pmod", 0)), Attrs(IO_STANDARD="SB_LVCMOS33", PULLUP=1)),
-             Subsignal("switch", PinsN("3", dir="i", conn=("pmod", 0)), Attrs(IO_STANDARD="SB_LVCMOS33", PULLUP=1)))
+             Subsignal("quadrature", PinsN("1", dir="i", conn=("pmod", 0)),
+                       Attrs(IO_STANDARD="SB_LVCMOS33", PULLUP=1)),
+             Subsignal("in_phase", PinsN("2", dir="i", conn=("pmod", 0)),
+                       Attrs(IO_STANDARD="SB_LVCMOS33", PULLUP=1)),
+             Subsignal("switch", PinsN("3", dir="i", conn=("pmod", 0)),
+                       Attrs(IO_STANDARD="SB_LVCMOS33", PULLUP=1)))
 ]
 
 class Top(Elaboratable):
@@ -50,8 +53,8 @@ class Top(Elaboratable):
                 green.eq(1-green),
             ]
             # shift with wrap around
-            with m.If(0 == self.iq_to_step_dir.direction):
-                m.d.sync +=  self.state.eq(Cat(self.state[-1:], self.state[:-1]))
+            with m.If(self.iq_to_step_dir.direction == 0):
+                m.d.sync += self.state.eq(Cat(self.state[-1:], self.state[:-1]))
             with m.Else():
                 m.d.sync += self.state.eq(Cat(self.state[1:], self.state[:1]))
 
@@ -72,7 +75,7 @@ class IQToStepDir(Elaboratable):
         self.step = Signal(1)
         self.direction = Signal(1)
 
-    def elaborate(self, platform):
+    def elaborate(self, _platform):
         m = Module()
 
         m.d.comb += [
@@ -105,15 +108,15 @@ if __name__ == "__main__":
         def out_proc():
             seq = (0b00, 0b01, 0b11, 0b10)
             yield iq_to_step_dir.iq.eq(0b00)
-            for i in range(16):
-                for i in range(4):
+            for _ in range(16):
+                for _ in range(4):
                     for iq in seq:
                         yield iq_to_step_dir.iq.eq(iq)
                         yield
                         yield
                         yield
                         yield
-                for i in range(4):
+                for _ in range(4):
                     for iq in seq[::-1]:
                         yield iq_to_step_dir.iq.eq(iq)
                         yield
@@ -122,11 +125,13 @@ if __name__ == "__main__":
                         yield
 
         sim.add_sync_process(out_proc)
-        with sim.write_vcd("rotary_encoder.vcd", "rotary_encoder.gtkw", traces=[iq_to_step_dir.iq, iq_to_step_dir.step, iq_to_step_dir.direction]):
+        with sim.write_vcd("rotary_encoder.vcd", "rotary_encoder.gtkw",
+                           traces=[iq_to_step_dir.iq,
+                                   iq_to_step_dir.step,
+                                   iq_to_step_dir.direction]):
             sim.run()
     else:
-        platform = ICEBreakerPlatform()
-        platform.add_resources(platform.break_off_pmod)
-        platform.add_resources(rotary_encoder_pmod)
-        platform.build(Top(), do_program=True)
-
+        plat = ICEBreakerPlatform()
+        plat.add_resources(plat.break_off_pmod)
+        plat.add_resources(rotary_encoder_pmod)
+        plat.build(Top(), do_program=True)

@@ -1,6 +1,6 @@
 from nmigen import *
 from nmigen.build import *
-from nmigen_boards.icebreaker import *
+from nmigen_boards.icebreaker import ICEBreakerPlatform
 
 # This PMOD is provided with your icebreaker, and should be attached
 # to PMOD1A.
@@ -37,9 +37,6 @@ class Top(Elaboratable):
         ones_counter = Signal(4)
         tens_counter = Signal(4)
         display_state = Signal(3)
-
-        # ones_segment = Signal(7)
-        # tens_segment = Signal(7)
 
         m.submodules.ones_to_segs = self.ones_to_segs
         m.submodules.tens_to_segs = self.tens_to_segs
@@ -78,7 +75,7 @@ class DigitToSegments(Elaboratable):
         self.digit = Signal(4)
         self.segments = Signal(7)
 
-    def elaborate(self, platform):
+    def elaborate(self, _platform):
         m = Module()
 
         with m.Switch(self.digit):

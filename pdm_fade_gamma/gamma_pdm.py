@@ -1,8 +1,8 @@
 import argparse
 
 from nmigen import *
-from nmigen_boards.icebreaker import *
 from nmigen.back import pysim
+from nmigen_boards.icebreaker import ICEBreakerPlatform
 
 # This example is based on the PDM module by Tommy Thorn, and
 # was written from esden's reimplementation.
@@ -20,13 +20,6 @@ from nmigen.back import pysim
 # The intended result is opposite pulsating Red and Green LEDs
 # on the iCEBreaker. The intended effect is that the two LED "breathe" in
 # brigtness up and down in opposite directions.
-
-
-# TODO: Send PR to nmigen_boards and add to `nmigen_boards.ext.pmod`.
-def PmodGPIOType1AResource(name, number, *, pmod, extras=None):
-    return Resource(name, number,
-                    Pins("1 2 3 4 7 8 9 10", dir="io", conn=("pmod", pmod)),
-                    extras=extras)
 
 
 class Top(Elaboratable):
@@ -93,7 +86,7 @@ class PDMDriver(Elaboratable):
         self.pdm_in = Signal(in_width)
         self.in_width = in_width
 
-    def elaborate(self, platform):
+    def elaborate(self, _platform):
         m = Module()
 
         pdm_sigma = Signal(self.in_width + 2)
@@ -120,7 +113,7 @@ class PDMCounter(Elaboratable):
         self.pdm_level1 = Signal(out_width)
         self.pdm_level2 = Signal.like(self.pdm_level1)
 
-    def elaborate(self, platform) -> Module:
+    def elaborate(self, _platform) -> Module:
         m = Module()
 
         m.submodules.gamma_rd_p = gamma_rd_p = self.gamma_table.read_port()
