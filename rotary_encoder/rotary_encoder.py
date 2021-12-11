@@ -2,10 +2,10 @@
 
 from argparse import ArgumentParser
 
-from nmigen import *
-from nmigen.build import *
-from nmigen.back import pysim
-from nmigen_boards.icebreaker import ICEBreakerPlatform
+from amaranth import *
+from amaranth.build import *
+from amaranth import sim
+from amaranth_boards.icebreaker import ICEBreakerPlatform
 
 
 # | rotary encoder pins | PMOD 1A pins |
@@ -102,8 +102,8 @@ if __name__ == "__main__":
 
     if args.s:
         iq_to_step_dir = IQToStepDir()
-        sim = pysim.Simulator(iq_to_step_dir)
-        sim.add_clock(1.0 / 12e6)
+        s = sim.Simulator(iq_to_step_dir)
+        s.add_clock(1.0 / 12e6)
 
         def out_proc():
             seq = (0b00, 0b01, 0b11, 0b10)
@@ -124,12 +124,12 @@ if __name__ == "__main__":
                         yield
                         yield
 
-        sim.add_sync_process(out_proc)
-        with sim.write_vcd("rotary_encoder.vcd", "rotary_encoder.gtkw",
+        s.add_sync_process(out_proc)
+        with s.write_vcd("rotary_encoder.vcd", "rotary_encoder.gtkw",
                            traces=[iq_to_step_dir.iq,
                                    iq_to_step_dir.step,
                                    iq_to_step_dir.direction]):
-            sim.run()
+            s.run()
     else:
         plat = ICEBreakerPlatform()
         plat.add_resources(plat.break_off_pmod)

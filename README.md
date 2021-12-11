@@ -1,15 +1,19 @@
-# iCEBreaker nmigen examples
+# iCEBreaker amaranth examples
 
-This repository contains examples for the [nmigen](https://github.com/nmigen/nmigen) Python toolbox for building complex digital hardware.
-nmigen is a refresh of [migen](https://github.com/m-labs/migen) and is expected to be the future direction for migen in general.
+This repository contains examples for the [amaranth HDL](https://github.com/amaranth-lang/amaranth)
+Python library for register transfer level modeling of synchronous logic. Ordinary Python code is
+used to construct a netlist of a digital circuit, which can be simulated, directly synthesized via
+Yosys, or converted to human-readable Verilog code for use with industry-standard toolchains.
 
-As wth the migen [examples](https://github.com/icebreaker-fpga/icebreaker-migen-examples), you will need to have python3, nmigen
-and icestorm/nextpnr/yosys (master branch) installed on your system. Additionally, you will need to have the
-[nmigen-boards](https://github.com/nmigen/nmigen-boards) package installed for the board description file for iCEBreaker.
+To install [amaranth](https://github.com/amaranth-lang/amaranth) and
+[amaranth-boards](https://github.com/amaranth-lang/amaranth-boards) and the necessary dependencies
+follow the [amaranth installation instructions](https://amaranth-lang.org/amaranth/latest/install.html).
 
-After that all you need to do is connect your iCEBreaker to the computer and run the python script in an example directory.
+After that all you need to do is connect your iCEBreaker to the computer and run the python script
+in an example directory.
 
 The scripts are by default set to synthesize and upload the bitstream to the iCEBreaker board.
 
 ## Warning
-Nmigen is currently unstable. Expect examples to occassionally break until nmigen fully stabilizes.
+Amaranth is still a work in progress project. Expect examples to occasionally break until amaranth
+fully stabilizes.

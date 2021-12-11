@@ -1,8 +1,8 @@
 from ctypes import ArgumentError
-from nmigen import *
-from nmigen.build import *
-from nmigen.back import pysim
-from nmigen_boards.icebreaker import *
+from amaranth import *
+from amaranth.build import *
+from amaranth import sim
+from amaranth_boards.icebreaker import *
 
 
 def _divisor(freq_in, freq_out, max_ppm=None):
@@ -328,12 +328,12 @@ if __name__ == "__main__":
         pads = _TestPads()
 
         dut = UART(pads, clk_freq=4800, baud_rate=1200)
-        sim = pysim.Simulator(dut)
-        sim.add_clock(1.0 / 12e6)
+        s = sim.Simulator(dut)
+        s.add_clock(1.0 / 12e6)
 
-        sim.add_sync_process(_test(pads.tx, pads.rx, dut))
-        with sim.write_vcd("uart.vcd", "uart.gtkw", traces=[pads.tx, pads.rx]):
-            sim.run()
+        s.add_sync_process(_test(pads.tx, pads.rx, dut))
+        with s.write_vcd("uart.vcd", "uart.gtkw", traces=[pads.tx, pads.rx]):
+            s.run()
     elif sys.argv[1] == "loopback":
         plat = ICEBreakerPlatform()
 

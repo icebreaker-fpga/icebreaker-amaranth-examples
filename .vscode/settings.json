@@ -2,8 +2,8 @@
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true,
     "python.linting.pylintArgs": [
-        "--disable=unused-wildcard-import,wildcard-import,too-few-public-methods,missing-module-docstring,missing-class-docstring,missing-function-docstring,not-context-manager",
+        "--disable=unused-wildcard-import,wildcard-import,too-few-public-methods,missing-module-docstring,missing-class-docstring,missing-function-docstring,not-context-manager,no-member",
         "--variable-rgx=[a-z0-9_]{1,30}$"
     ],
-    "python.pythonPath": "~/.venv/nmigen/bin/python"
+    "python.pythonPath": "~/.venv/amaranth/bin/python"
 }

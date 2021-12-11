@@ -1,8 +1,8 @@
 import argparse
 
-from nmigen import *
-from nmigen.back import pysim
-from nmigen_boards.icebreaker import ICEBreakerPlatform
+from amaranth import *
+from amaranth import sim
+from amaranth_boards.icebreaker import ICEBreakerPlatform
 
 # This example is based on the PDM module by Tommy Thorn, and
 # was written from esden's reimplementation.
@@ -134,11 +134,11 @@ class PDMCounter(Elaboratable):
                 pdm_level.eq(pdm_level + 1)
             ]
 
-        # In the Verilog version, the output data from the gamma table is
-        # in an explicit always/sync block. The default memory in nmigen has
-        # a synchronous read port (asynchronous=False), so data appears one
-        # clock cycle after addr is put on the bus.
-        # Therefore we connect nets directly.
+        # In the Verilog version, the output data from the gamma table is in an
+        # explicit always/sync block. The default memory in amaranth has a
+        # synchronous read port (asynchronous=False), so data appears one clock
+        # cycle after addr is put on the bus. Therefore we connect nets
+        # directly.
         m.d.comb += [
             gamma_rd_p.addr.eq(pdm_level),
             gamma_rd_n.addr.eq(~pdm_level),
@@ -168,8 +168,8 @@ if __name__ == "__main__":
 
     if args.s:
         p = PDMDriver(8)
-        sim = pysim.Simulator(p)
-        sim.add_clock(1.0 / 12e6)
+        s = sim.Simulator(p)
+        s.add_clock(1.0 / 12e6)
 
         def out_proc():
             for i in range(256):
@@ -179,9 +179,9 @@ if __name__ == "__main__":
                 yield
                 yield
 
-        sim.add_sync_process(out_proc)
-        with sim.write_vcd("drv.vcd", "drv.gtkw", traces=[p.pdm_in, p.pdm_out]):
-            sim.run()
+        s.add_sync_process(out_proc)
+        with s.write_vcd("drv.vcd", "drv.gtkw", traces=[p.pdm_in, p.pdm_out]):
+            s.run()
     else:
         plat = ICEBreakerPlatform()
         plat.build(Top(gamma=args.g), do_program=True)

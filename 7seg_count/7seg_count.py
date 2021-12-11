@@ -1,6 +1,6 @@
-from nmigen import *
-from nmigen.build import *
-from nmigen_boards.icebreaker import ICEBreakerPlatform
+from amaranth import *
+from amaranth.build import *
+from amaranth_boards.icebreaker import ICEBreakerPlatform
 
 # This PMOD is provided with your icebreaker, and should be attached
 # to PMOD1A.
@@ -21,7 +21,7 @@ class Top(Elaboratable):
     def __init__(self):
         # TODO: Figure out how to expose the P1A{1-4, 7-10} pins in the
         # constructor so Top can be built in a potentially platform-agnostic
-        # way using nmigen.cli.main. For now, only put child modules in
+        # way using amaranth.cli.main. For now, only put child modules in
         # constructor.
         self.ones_to_segs = DigitToSegments()
         self.tens_to_segs = DigitToSegments()

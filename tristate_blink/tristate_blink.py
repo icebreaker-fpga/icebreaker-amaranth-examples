@@ -1,7 +1,7 @@
-from nmigen import *
-from nmigen.build import *
-from nmigen.lib.io import Pin
-from nmigen_boards.icebreaker import ICEBreakerPlatform
+from amaranth import *
+from amaranth.build import *
+from amaranth.lib.io import Pin
+from amaranth_boards.icebreaker import ICEBreakerPlatform
 
 # This resource has a single 'oe' signal for all the pins.
 # If we want individually controllable 'oe' signals for each pin,
