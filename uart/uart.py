@@ -1,3 +1,4 @@
+from argparse import ArgumentParser
 from ctypes import ArgumentError
 from amaranth import *
 from amaranth.build import *
@@ -323,8 +324,11 @@ class _LoopbackTest(Elaboratable):
 
 
 if __name__ == "__main__":
-    import sys
-    if sys.argv[1] == "sim":
+    parser = ArgumentParser()
+    parser.add_argument("-s", action="store_true", help="Simulate Rotary Encoder (for debugging).")
+    args = parser.parse_args()
+
+    if args.s:
         pads = _TestPads()
 
         dut = UART(pads, clk_freq=4800, baud_rate=1200)
@@ -334,7 +338,7 @@ if __name__ == "__main__":
         s.add_sync_process(_test(pads.tx, pads.rx, dut))
         with s.write_vcd("uart.vcd", "uart.gtkw", traces=[pads.tx, pads.rx]):
             s.run()
-    elif sys.argv[1] == "loopback":
+    else:
         plat = ICEBreakerPlatform()
 
         # The debug pins are on the PMOD1A in the following order on the connector:
