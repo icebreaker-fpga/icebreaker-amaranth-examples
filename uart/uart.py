@@ -270,11 +270,14 @@ def _test_tx(tx, dut):
     yield from O(0xFF, [1, 1, 1, 1, 1, 1, 1, 1])
     yield from O(0x00, [0, 0, 0, 0, 0, 0, 0, 0])
 
+def _test(rx, tx, dut):
+    yield from _test_rx(pads.rx, dut)
+    yield from _test_tx(pads.tx, dut)
 
-def _test(tx, rx, dut, _cd=None):
-    yield from _test_rx(rx, dut)
-    yield from _test_tx(tx, dut)
-
+def _proc_wrapper(process):
+    def wrapper():
+        yield from process
+    return wrapper
 
 class _LoopbackTest(Elaboratable):
     def __init__(self):
@@ -335,7 +338,7 @@ if __name__ == "__main__":
         s = sim.Simulator(dut)
         s.add_clock(1.0 / 12e6)
 
-        s.add_sync_process(_test(pads.tx, pads.rx, dut))
+        s.add_sync_process(_proc_wrapper(_test(pads.rx, pads.tx, dut)))
         with s.write_vcd("uart.vcd", "uart.gtkw", traces=[pads.tx, pads.rx]):
             s.run()
     else:
