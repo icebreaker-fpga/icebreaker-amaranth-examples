@@ -14,6 +14,12 @@ in an example directory.
 
 The scripts are by default set to synthesize and upload the bitstream to the iCEBreaker board.
 
+## Repository structure
+
+This repository contains examples for multiple iCEBreaker development boards.
+The examples for each dev board can be found inside their respective
+subdirectories.
+
 ## Warning
 Amaranth is still a work in progress project. Expect examples to occasionally break until amaranth
 fully stabilizes.
