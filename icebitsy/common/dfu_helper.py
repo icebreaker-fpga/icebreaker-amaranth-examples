@@ -2,6 +2,27 @@ from amaranth import *
 from amaranth import sim
 
 
+class ICEBitsyDfuWrapper(Elaboratable):
+    def __init__(self, main):
+        self.main = main
+
+    def elaborate(self, platform):
+        m = Module()
+
+        # Hold user button until green LED
+        # goes out, upon release the bitsy
+        # will reboot into the DFU bootloader
+        dfu = DfuHelper()
+        dfu.btn_in = platform.request("button")
+        m.submodules += dfu
+        ledg = platform.request("led_g")
+        m.d.comb += ledg.eq(~dfu.will_reboot)
+
+        m.submodules += self.main
+
+        return m
+
+
 class DfuHelper(Elaboratable):
     """Trigger reboot from application into DFU Bootloader or bootloader to
     application by pressing the `btn_in` for at least `2^long_tw` cycles.
