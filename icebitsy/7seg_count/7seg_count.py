@@ -11,8 +11,8 @@ else:
     sys.path.append(os.path.dirname(__file__) + '/..')
     from common.dfu_helper import ICEBitsyDfuWrapper
 
-# This PMOD is provided with your icebreaker, and should be attached
-# to PMOD1A.
+# This Pmod is provided by the iCEBreaker-Bitsy Pmod breakout board.
+# Connect to Pmod1
 seven_seg_pmod = [
     Resource("seven_seg", 0,
              Subsignal("aa", PinsN("1", dir="o", conn=("pmod", 1)), Attrs(IO_STANDARD="SB_LVCMOS33")),
@@ -28,10 +28,6 @@ seven_seg_pmod = [
 
 class Top(Elaboratable):
     def __init__(self):
-        # TODO: Figure out how to expose the P1A{1-4, 7-10} pins in the
-        # constructor so Top can be built in a potentially platform-agnostic
-        # way using amaranth.cli.main. For now, only put child modules in
-        # constructor.
         self.ones_to_segs = DigitToSegments()
         self.tens_to_segs = DigitToSegments()
 
