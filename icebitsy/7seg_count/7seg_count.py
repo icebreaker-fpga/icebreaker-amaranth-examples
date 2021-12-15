@@ -120,4 +120,4 @@ if __name__ == "__main__":
     # None otherwise.
     plan = plat.build(ICEBitsyDfuWrapper(Top()), do_build=False, do_program=False)  # BuildPlan
     products = plan.execute()  # BuildProducts
-    plat.toolchain_program(products, "top")  # Manally run the programmer.
+    plat.toolchain_program(products, "top")  # Manually run the programmer.
