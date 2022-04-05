@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from amaranth import *
 from amaranth_boards.icebreaker_bitsy import ICEBreakerBitsyPlatform
 
