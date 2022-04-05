@@ -9,7 +9,7 @@ To install [amaranth](https://amaranth-lang.org/docs/amaranth/latest/install.htm
 [amaranth-boards](https://github.com/amaranth-lang/amaranth-boards) and the necessary dependencies
 follow the [amaranth installation instructions](https://amaranth-lang.org/docs/amaranth/latest/install.html).
 
-if amaranth-boards is not properly installed, you can install it directly from github with `pip install git+https://github.com/amaranth-lang/amaranth-boards.git`
+If amaranth-boards is not properly installed, you can install it directly from github with `pip install git+https://github.com/amaranth-lang/amaranth-boards.git`
 
 You also need to have the [iCEBreaker Toolchain](https://github.com/icebreaker-fpga/icebreaker-workshop#toolchain-installation) installed.
 
