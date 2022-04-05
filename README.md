@@ -5,9 +5,13 @@ Python library for register transfer level modeling of synchronous logic. Ordina
 used to construct a netlist of a digital circuit, which can be simulated, directly synthesized via
 Yosys, or converted to human-readable Verilog code for use with industry-standard toolchains.
 
-To install [amaranth](https://github.com/amaranth-lang/amaranth) and
+To install [amaranth](https://amaranth-lang.org/docs/amaranth/latest/install.html) and
 [amaranth-boards](https://github.com/amaranth-lang/amaranth-boards) and the necessary dependencies
 follow the [amaranth installation instructions](https://amaranth-lang.org/docs/amaranth/latest/install.html).
+
+if amaranth-boards is not properly installed, you can install it directly from github with `pip install git+https://github.com/amaranth-lang/amaranth-boards.git`
+
+You also need to have the [iCEBreaker Toolchain](https://github.com/icebreaker-fpga/icebreaker-workshop#toolchain-installation) installed.
 
 After that all you need to do is connect your iCEBreaker to the computer and run the python script
 in an example directory.

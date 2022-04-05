@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from amaranth import *
 from amaranth.build import *
 from amaranth.lib.io import Pin
