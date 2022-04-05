@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from argparse import ArgumentParser
 from ctypes import ArgumentError
 from amaranth import *
