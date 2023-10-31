@@ -46,8 +46,8 @@ class Top(Elaboratable):
         m.d.comb += [
             self.pdm_g.pdm_in.eq(self.cnt.pdm_level1),
             self.pdm_r.pdm_in.eq(self.cnt.pdm_level2),
-            ledg_n.eq(self.pdm_g.pdm_out),
-            ledr_n.eq(self.pdm_r.pdm_out)
+            ledg_n.o.eq(self.pdm_g.pdm_out),
+            ledr_n.o.eq(self.pdm_r.pdm_out)
         ]
 
         return m
