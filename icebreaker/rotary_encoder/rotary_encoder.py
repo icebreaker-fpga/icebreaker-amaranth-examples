@@ -32,13 +32,10 @@ class Top(Elaboratable):
         encoder_pins = platform.request("rotary_encoder")
         red = platform.request("led_r", 0)
         green = platform.request("led_g", 0)
-        leds = Cat(
-            # leds in ccw order
-            platform.request("led_g", 1),
-            platform.request("led_g", 4),
-            platform.request("led_g", 2),
-            platform.request("led_g", 3),
-        )
+        led_g_1 = platform.request("led_g", 1)
+        led_g_2 = platform.request("led_g", 4)
+        led_g_3 = platform.request("led_g", 2)
+        led_g_4 = platform.request("led_g", 3)
 
         m = Module()
 
@@ -48,9 +45,9 @@ class Top(Elaboratable):
         with m.If(self.iq_to_step_dir.step):
             m.d.sync += [
                 # on = cw, off = ccw
-                red.eq(self.iq_to_step_dir.direction),
+                red.o.eq(self.iq_to_step_dir.direction),
                 # toggle led
-                green.eq(1-green),
+                green.o.eq(1-green.o),
             ]
             # shift with wrap around
             with m.If(self.iq_to_step_dir.direction == 0):
@@ -60,7 +57,10 @@ class Top(Elaboratable):
 
         m.d.comb += [
             self.iq_to_step_dir.iq.eq(Cat(encoder_pins.in_phase, encoder_pins.quadrature)),
-            leds.eq(self.state),
+            led_g_1.o.eq(self.state[0]),
+            led_g_2.o.eq(self.state[1]),
+            led_g_3.o.eq(self.state[2]),
+            led_g_4.o.eq(self.state[3])
         ]
 
         return m

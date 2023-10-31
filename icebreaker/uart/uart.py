@@ -114,17 +114,17 @@ class UART(Elaboratable):
                     ]
                     m.next = "START"
                 with m.Else():
-                    m.d.sync += self.serial.tx.eq(1)
+                    m.d.sync += self.serial.tx.o.eq(1)
 
             with m.State("START"):
                 with m.If(self.tx_strobe):
-                    m.d.sync += self.serial.tx.eq(0)
+                    m.d.sync += self.serial.tx.o.eq(0)
                     m.next = "DATA"
 
             with m.State("DATA"):
                 with m.If(self.tx_strobe):
                     m.d.sync += [
-                        self.serial.tx.eq(tx_latch[0]),
+                        self.serial.tx.o.eq(tx_latch[0]),
                         tx_latch.eq(Cat(tx_latch[1:8], 0)),
                         tx_bitno.eq(tx_bitno + 1)
                     ]
@@ -133,7 +133,7 @@ class UART(Elaboratable):
 
             with m.State("STOP"):
                 with m.If(self.tx_strobe):
-                    m.d.sync += self.serial.tx.eq(1)
+                    m.d.sync += self.serial.tx.o.eq(1)
                     m.next = "IDLE"
 
         return m
@@ -293,7 +293,8 @@ class _LoopbackTest(Elaboratable):
         m = Module()
 
         serial = platform.request("uart")
-        leds = Cat([platform.request("led_r"), platform.request("led_g")])
+        led_r = platform.request("led_r")
+        led_g = platform.request("led_g")
         debug = platform.request("debug")
 
         self.uart = UART(serial, clk_freq=12000000, baud_rate=115200)
@@ -316,13 +317,14 @@ class _LoopbackTest(Elaboratable):
             m.d.sync += self.empty.eq(1)
 
         m.d.comb += [
-            leds.eq(self.uart.rx_data[0:2]),
-            debug.eq(Cat(
-                serial.rx,
-                serial.tx,
-                self.uart.rx_strobe,
-                self.uart.tx_strobe,
-            ))
+            led_r.o.eq(self.uart.rx_data[0]),
+            led_g.o.eq(self.uart.rx_data[1]),
+            #debug.eq(Cat(
+            #    serial.rx,
+            #    serial.tx,
+            #    self.uart.rx_strobe,
+            #    self.uart.tx_strobe,
+            #))
         ]
 
         return m
