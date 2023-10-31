@@ -17,7 +17,7 @@ class Blinker(Elaboratable):
 
         with m.If(counter == 0):
             m.d.sync += [
-                led.eq(~led),
+                led.o.eq(~led.o),
                 counter.eq(self.maxperiod)
             ]
         with m.Else():
