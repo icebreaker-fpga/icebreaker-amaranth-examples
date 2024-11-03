@@ -44,8 +44,8 @@ class Top(Elaboratable):
         m.submodules.tens_to_segs = self.tens_to_segs
 
         m.d.comb += [
-            Cat([seg_pins.aa, seg_pins.ab, seg_pins.ac, seg_pins.ad,
-                 seg_pins.ae, seg_pins.af, seg_pins.ag]).eq(seg_pins_cat),
+            Cat([seg_pins.aa.o, seg_pins.ab.o, seg_pins.ac.o, seg_pins.ad.o,
+                 seg_pins.ae.o, seg_pins.af.o, seg_pins.ag.o]).eq(seg_pins_cat),
             ones_counter.eq(counter[21:25]),
             tens_counter.eq(counter[25:29]),
             display_state.eq(counter[2:5]),
@@ -61,13 +61,13 @@ class Top(Elaboratable):
             with m.Case("010"):
                 m.d.sync += seg_pins_cat.eq(0)
             with m.Case("011"):
-                m.d.sync += seg_pins.ca.eq(1)
+                m.d.sync += seg_pins.ca.o.eq(1)
             with m.Case("10-"):
                 m.d.sync += seg_pins_cat.eq(self.tens_to_segs.segments)
             with m.Case("110"):
                 m.d.sync += seg_pins_cat.eq(0)
             with m.Case("111"):
-                m.d.sync += seg_pins.ca.eq(0)
+                m.d.sync += seg_pins.ca.o.eq(0)
 
         return m
 

@@ -58,7 +58,7 @@ class UART(Elaboratable):
         self.rx_bitno = rx_bitno = Signal(3)
         with m.FSM(reset="IDLE") as self.rx_fsm:
             with m.State("IDLE"):
-                with m.If(~self.serial.rx):
+                with m.If(~self.serial.rx.i):
                     m.d.sync += rx_counter.eq(self.divisor // 2)
                     m.next = "START"
 
@@ -70,7 +70,7 @@ class UART(Elaboratable):
                 with m.If(self.rx_strobe):
                     m.d.sync += [
                         self.rx_data.eq(
-                            Cat(self.rx_data[1:8], self.serial.rx)),
+                            Cat(self.rx_data[1:8], self.serial.rx.i)),
                         rx_bitno.eq(rx_bitno + 1)
                     ]
                     with m.If(rx_bitno == 7):
@@ -78,7 +78,7 @@ class UART(Elaboratable):
 
             with m.State("STOP"):
                 with m.If(self.rx_strobe):
-                    with m.If(~self.serial.rx):
+                    with m.If(~self.serial.rx.i):
                         m.next = "ERROR"
                     with m.Else():
                         m.next = "FULL"
@@ -87,7 +87,7 @@ class UART(Elaboratable):
                 m.d.comb += self.rx_ready.eq(1)
                 with m.If(self.rx_ack):
                     m.next = "IDLE"
-                with m.Elif(~self.serial.rx):
+                with m.Elif(~self.serial.rx.i):
                     m.next = "ERROR"
 
             with m.State("ERROR"):
@@ -114,17 +114,17 @@ class UART(Elaboratable):
                     ]
                     m.next = "START"
                 with m.Else():
-                    m.d.sync += self.serial.tx.eq(1)
+                    m.d.sync += self.serial.tx.o.eq(1)
 
             with m.State("START"):
                 with m.If(self.tx_strobe):
-                    m.d.sync += self.serial.tx.eq(0)
+                    m.d.sync += self.serial.tx.o.eq(0)
                     m.next = "DATA"
 
             with m.State("DATA"):
                 with m.If(self.tx_strobe):
                     m.d.sync += [
-                        self.serial.tx.eq(tx_latch[0]),
+                        self.serial.tx.o.eq(tx_latch[0]),
                         tx_latch.eq(Cat(tx_latch[1:8], 0)),
                         tx_bitno.eq(tx_bitno + 1)
                     ]
@@ -133,7 +133,7 @@ class UART(Elaboratable):
 
             with m.State("STOP"):
                 with m.If(self.tx_strobe):
-                    m.d.sync += self.serial.tx.eq(1)
+                    m.d.sync += self.serial.tx.o.eq(1)
                     m.next = "IDLE"
 
         return m
@@ -293,8 +293,8 @@ class _LoopbackTest(Elaboratable):
         m = Module()
 
         serial = platform.request("uart")
-        leds = Cat([platform.request("led_r"), platform.request("led_g")])
-        debug = platform.request("debug")
+        leds = Cat([platform.request("led_r").o, platform.request("led_g").o])
+        debug = platform.request("debug").o
 
         self.uart = UART(serial, clk_freq=12000000, baud_rate=115200)
         m.submodules.uart = self.uart
@@ -318,8 +318,8 @@ class _LoopbackTest(Elaboratable):
         m.d.comb += [
             leds.eq(self.uart.rx_data[0:2]),
             debug.eq(Cat(
-                serial.rx,
-                serial.tx,
+                serial.rx.i,
+                serial.tx.o,
                 self.uart.rx_strobe,
                 self.uart.tx_strobe,
             ))

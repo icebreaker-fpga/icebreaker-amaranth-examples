@@ -9,7 +9,7 @@ class Blinker(Elaboratable):
         self.maxperiod = maxperiod
 
     def elaborate(self, platform):
-        led = platform.request("led_r")
+        led = platform.request("led_r").o
 
         m = Module()
 

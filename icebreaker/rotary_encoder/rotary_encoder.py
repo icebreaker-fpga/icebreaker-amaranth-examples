@@ -30,14 +30,14 @@ class Top(Elaboratable):
 
     def elaborate(self, platform):
         encoder_pins = platform.request("rotary_encoder")
-        red = platform.request("led_r", 0)
-        green = platform.request("led_g", 0)
+        red = platform.request("led_r", 0).o
+        green = platform.request("led_g", 0).o
         leds = Cat(
             # leds in ccw order
-            platform.request("led_g", 1),
-            platform.request("led_g", 4),
-            platform.request("led_g", 2),
-            platform.request("led_g", 3),
+            platform.request("led_g", 1).o,
+            platform.request("led_g", 4).o,
+            platform.request("led_g", 2).o,
+            platform.request("led_g", 3).o,
         )
 
         m = Module()
@@ -59,7 +59,7 @@ class Top(Elaboratable):
                 m.d.sync += self.state.eq(Cat(self.state[1:], self.state[:1]))
 
         m.d.comb += [
-            self.iq_to_step_dir.iq.eq(Cat(encoder_pins.in_phase, encoder_pins.quadrature)),
+            self.iq_to_step_dir.iq.eq(Cat(encoder_pins.in_phase.i, encoder_pins.quadrature.i)),
             leds.eq(self.state),
         ]
 
